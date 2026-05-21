@@ -67,4 +67,45 @@ cca_data = {
 }
 
 # Flatten list for selection menus
-all_ccas_flat = ["Select an option..."] + [item["name"] for cat in cca_data.
+all_ccas_flat = ["Select an option..."] + [item["name"] for cat in cca_data.values() for item in cat]
+
+# App Titles
+st.markdown('<div class="main-title">CCA REGISTRATION PORTAL</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">Select your choices based on DofE requirements and HPL Framework Focus</div>', unsafe_allow_html=True)
+
+# Layout Split: Left for Selection, Right for Directory viewing
+col1, col2 = st.columns([1, 1], gap="large")
+
+with col1:
+    st.subheader("👤 Student Registration Form")
+    with st.form("registration_form", clear_on_submit=True):
+        student_name = st.text_input("Full Name:")
+        student_id = st.text_input("Student ID Number:")
+        year_group = st.selectbox("Year Group:", ["Select Year...", "Year 7", "Year 8", "Year 9", "Year 10", "Year 11", "Year 12", "Year 13"])
+        
+        st.write("---")
+        st.write("### Preferences")
+        choice_1 = st.selectbox("1st Choice Preference:", all_ccas_flat)
+        choice_2 = st.selectbox("2nd Choice Preference:", all_ccas_flat)
+        choice_3 = st.selectbox("3rd Choice Preference:", all_ccas_flat)
+        
+        submit_btn = st.form_submit_button("Submit Application")
+        
+        if submit_btn:
+            if not student_name or not student_id or year_group == "Select Year...":
+                st.error("Please fill out all student identification details.")
+            elif choice_1 == "Select an option..." or choice_2 == "Select an option..." or choice_3 == "Select an option...":
+                st.error("Please pick valid selections for all 3 preferences.")
+            elif choice_1 == choice_2 or choice_1 == choice_3 or choice_2 == choice_3:
+                st.error("Duplicate entries found! Please select 3 distinct choices.")
+            else:
+                # Add registration details into the application cache
+                new_submission = {
+                    "Full Name": student_name,
+                    "Student ID": student_id,
+                    "Year Group": year_group,
+                    "1st Choice": choice_1,
+                    "2nd Choice": choice_2,
+                    "3rd Choice": choice_3
+                }
+                st.session_state.registrations.
