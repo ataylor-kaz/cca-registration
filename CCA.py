@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 
 # Set page configuration
 st.set_page_config(page_title="CCA Registration Portal", page_icon="📘", layout="centered")
@@ -15,7 +14,7 @@ st.markdown("""
     .framework-label { font-size: 13px; color: #7f8c8d; font-weight: bold; }
     .framework-value { font-size: 13px; color: #2c3e50; }
     </style>
-""", unsafe_index=True)
+""", unsafe_allow_html=True)
 
 # Application Data Structured cleanly without text explanations
 cca_data = {
@@ -95,7 +94,7 @@ with col1:
             elif choice_1 == choice_2 or choice_1 == choice_3 or choice_2 == choice_3:
                 st.error("Duplicate entries found! Please select 3 distinct choices.")
             else:
-                # Process registration (In production, save to a database or Google Sheets)
+                # Process registration
                 st.success(f"Success! Registration submitted for {student_name} ({year_group}).")
                 st.balloons()
 
