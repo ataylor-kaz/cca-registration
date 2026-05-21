@@ -99,7 +99,7 @@ with col1:
             elif choice_1 == choice_2 or choice_1 == choice_3 or choice_2 == choice_3:
                 st.error("Duplicate entries found! Please select 3 distinct choices.")
             else:
-                # Add registration details into the application cache
+                # Add registration details into the application cache safely
                 new_submission = {
                     "Full Name": student_name,
                     "Student ID": student_id,
@@ -108,4 +108,54 @@ with col1:
                     "2nd Choice": choice_2,
                     "3rd Choice": choice_3
                 }
-                st.session_state.registrations.
+                st.session_state.registrations.append(new_submission)
+                st.success(f"Success! Registration submitted for {student_name} ({year_group}).")
+                st.balloons()
+
+with col2:
+    st.subheader("📋 Core Focus Directory")
+    
+    # Display the directory in high contrast format without any explanations
+    for category, items in cca_data.items():
+        st.markdown(f'<div class="category-header">{category}</div>', unsafe_allow_html=True)
+        for item in items:
+            st.markdown(f"""
+                <div class="cca-container">
+                    <div class="cca-name">{item['name']}</div>
+                    <div>
+                        <span class="framework-label">DofE Frame:</span> 
+                        <span class="framework-value">{item['dofe']}</span>
+                    </div>
+                    <div>
+                        <span class="framework-label">HPL Focus:</span> 
+                        <span class="framework-value">{item['hpl']}</span>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+
+# ---------------------------------------------------------
+# ADMINISTRATOR PANEL (Located at the bottom of the page)
+# ---------------------------------------------------------
+st.write("---")
+with st.expander("🔐 Administrator Response Portal"):
+    admin_password = st.text_input("Enter Admin Password:", type="password")
+    
+    if admin_password == "admin123":
+        st.write("### Submitted Student Registrations")
+        
+        if len(st.session_state.registrations) == 0:
+            st.info("No student applications have been received yet during this active session.")
+        else:
+            df = pd.DataFrame(st.session_state.registrations)
+            st.dataframe(df, use_container_width=True)
+            
+            csv_data = df.to_csv(index=False).encode('utf-8')
+            
+            st.download_button(
+                label="📥 Download Responses as CSV Sheet",
+                data=csv_data,
+                file_name="cca_student_registrations.csv",
+                mime="text/csv"
+            )
+    elif admin_password != "":
+        st.error("Incorrect Password. Please try again.")
